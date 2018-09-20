@@ -11,6 +11,7 @@ public class ShipController : MonoBehaviour
 
     public GameObject gunPosition;
     public GameObject bullet;
+    public GameObject explosion;
 
     private Vector2 direction;
     private float actualSpeed = 0;
@@ -55,5 +56,14 @@ public class ShipController : MonoBehaviour
 
         transform.position = transform.position + transform.up * Time.deltaTime * actualSpeed;
         transform.Rotate(0, 0, rotateAmount);
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.tag == "Asteroid")
+        {
+            Instantiate(explosion, transform.position, transform.rotation);
+            Destroy(gameObject);
+        }
     }
 }
