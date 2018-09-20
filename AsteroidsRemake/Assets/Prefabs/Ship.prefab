@@ -83,10 +83,10 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
-  m_Mass: 1
+  m_Mass: 0.0001
   m_LinearDrag: 0
   m_AngularDrag: 0.05
-  m_GravityScale: 1
+  m_GravityScale: 0
   m_Material: {fileID: 0}
   m_Interpolate: 0
   m_SleepingMode: 1
@@ -184,12 +184,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d9ec9a8d20eabde41b46d0c77368e73a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxSpeed: 7
-  lookSpeed: 20
-  maxLookSpeed: 10
   gunPosition: {fileID: 1066254635760868}
   bullet: {fileID: 1701187051125838, guid: 2608c77311a8f484aaeb9a2a711fd9fa, type: 2}
   explosion: {fileID: 1321219835005542, guid: 91d5cec2f1757104b84a0bdf7a676330, type: 2}
+  maxSpeed: 2
+  acceleration: 0.15
+  lookSpeed: 20
+  maxLookSpeed: 10
 --- !u!212 &212246921402755508
 SpriteRenderer:
   m_ObjectHideFlags: 1

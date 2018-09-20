@@ -9,7 +9,7 @@ public class SceneManager : MonoBehaviour {
     public float numberOfAsteroids;
 
     private int score;
-    private float lives;
+    private int lives;
 
 	void Start () {
         lives = 3;
@@ -22,8 +22,8 @@ public class SceneManager : MonoBehaviour {
         scoreText.text = score.ToString();
     }
 
-    public void IncreaseScore()
+    public void IncreaseScore(int amount)
     {
-        score++;
+        score += amount;
     }
 }

@@ -103,6 +103,7 @@ MonoBehaviour:
   asteroid: {fileID: 0}
   speed: 2
   lastAsteroid: 1
+  points: 100
 --- !u!212 &212875566696505200
 SpriteRenderer:
   m_ObjectHideFlags: 1

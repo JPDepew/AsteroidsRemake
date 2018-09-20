@@ -4,20 +4,17 @@ using UnityEngine;
 
 public class ShipController : MonoBehaviour
 {
-
-    public float maxSpeed = 2;
-    public float lookSpeed = 1;
-    public float maxLookSpeed = 5;
-
     public GameObject gunPosition;
     public GameObject bullet;
     public GameObject explosion;
 
+    public float maxSpeed = 2;
+    public float acceleration = 0.1f;
+    public float lookSpeed = 1;
+    public float maxLookSpeed = 5;
+
     private Vector2 direction;
-    private float actualSpeed = 0;
     private float rotateAmount = 0;
-    Vector2 oldPosition;
-    bool collided;
 
     float verticalHalfSize;
     float horizontalHalfSize;
@@ -33,7 +30,7 @@ public class ShipController : MonoBehaviour
         GetInput();
         HandleWrapping();
 
-        transform.position = transform.position + transform.up * Time.deltaTime * actualSpeed;
+        transform.position = transform.position + (Vector3)direction * Time.deltaTime;
         transform.Rotate(0, 0, rotateAmount);
     }
 
@@ -41,17 +38,7 @@ public class ShipController : MonoBehaviour
     {
         if (Input.GetKey(KeyCode.W))
         {
-            if (actualSpeed < maxSpeed)
-            {
-                actualSpeed += 0.2f;
-            }
-        }
-        if (Input.GetKey(KeyCode.S))
-        {
-            if (actualSpeed > -maxSpeed)
-            {
-                actualSpeed -= 0.2f;
-            }
+            direction += (Vector2)(transform.up * acceleration);
         }
         if (Input.GetKey(KeyCode.A))
         {
@@ -74,6 +61,9 @@ public class ShipController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// If the ship goes off the screen, it is wrapped around to the other side
+    /// </summary>
     private void HandleWrapping()
     {
         if (transform.position.y > verticalHalfSize)

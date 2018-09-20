@@ -8,6 +8,7 @@ public class Asteroid : MonoBehaviour
     public GameObject asteroid;
     public float speed = 2f;
     public bool lastAsteroid;
+    public int points = 25;
 
     private float verticalHalfSize;
     private float horizontalHalfSize;
@@ -59,7 +60,7 @@ public class Asteroid : MonoBehaviour
                 Instantiate(asteroid, transform.position, transform.rotation);
             }
             Destroy(collision.gameObject);
-            sceneManager.IncreaseScore();
+            sceneManager.IncreaseScore(points);
             Destroy(gameObject);
         }
     }
