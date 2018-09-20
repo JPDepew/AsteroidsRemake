@@ -46,7 +46,7 @@ public class ShipController : MonoBehaviour
         }
         if (!(Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D)) && rotateAmount != 0)
         {
-            rotateAmount += rotateAmount > 0 ? -lookSpeed * Time.deltaTime : lookSpeed * Time.deltaTime;
+            rotateAmount = Mathf.Lerp(rotateAmount, 0, 0.2f);
         }
         if (Input.GetKeyDown(KeyCode.Space))
         {
