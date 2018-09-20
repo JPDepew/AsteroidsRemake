@@ -22,7 +22,9 @@ public class Asteroid : MonoBehaviour
     {
         if (collision.tag == "Bullet")
         {
+            SceneManager.IncreaseScore();
             Instantiate(explosion, transform.position, transform.rotation);
+            Destroy(collision.gameObject);
             Destroy(gameObject);
         }
     }

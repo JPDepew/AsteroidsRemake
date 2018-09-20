@@ -35,6 +35,7 @@ public class ShipController : MonoBehaviour
                 actualSpeed -= 0.2f;
             }
         }
+
         if (Input.GetKey(KeyCode.A))
         {
             if (rotateAmount < maxLookSpeed)
@@ -45,7 +46,7 @@ public class ShipController : MonoBehaviour
             if (rotateAmount > -maxLookSpeed)
                 rotateAmount += -lookSpeed * Time.deltaTime;
         }
-        if (!(Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D)) && rotateAmount != 0)
+        if (!Input.GetKey(KeyCode.A) && !Input.GetKey(KeyCode.D))
         {
             rotateAmount = Mathf.Lerp(rotateAmount, 0, 0.2f);
         }
