@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 public class SceneManager : MonoBehaviour {
@@ -10,7 +8,7 @@ public class SceneManager : MonoBehaviour {
     public Text scoreText;
     public float numberOfAsteroids;
 
-    private static int score;
+    private int score;
     private float lives;
 
 	void Start () {
@@ -24,7 +22,7 @@ public class SceneManager : MonoBehaviour {
         scoreText.text = score.ToString();
     }
 
-    public static void IncreaseScore()
+    public void IncreaseScore()
     {
         score++;
     }

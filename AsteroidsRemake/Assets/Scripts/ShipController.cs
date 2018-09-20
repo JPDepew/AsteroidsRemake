@@ -19,7 +19,25 @@ public class ShipController : MonoBehaviour
     Vector2 oldPosition;
     bool collided;
 
+    float verticalHalfSize;
+    float horizontalHalfSize;
+
+    private void Start()
+    {
+        verticalHalfSize = Camera.main.orthographicSize;
+        horizontalHalfSize = verticalHalfSize * Screen.width / Screen.height;
+    }
+
     void Update()
+    {
+        GetInput();
+        HandleWrapping();
+
+        transform.position = transform.position + transform.up * Time.deltaTime * actualSpeed;
+        transform.Rotate(0, 0, rotateAmount);
+    }
+
+    private void GetInput()
     {
         if (Input.GetKey(KeyCode.W))
         {
@@ -35,7 +53,6 @@ public class ShipController : MonoBehaviour
                 actualSpeed -= 0.2f;
             }
         }
-
         if (Input.GetKey(KeyCode.A))
         {
             if (rotateAmount < maxLookSpeed)
@@ -50,13 +67,31 @@ public class ShipController : MonoBehaviour
         {
             rotateAmount = Mathf.Lerp(rotateAmount, 0, 0.2f);
         }
+
         if (Input.GetKeyDown(KeyCode.Space))
         {
             Instantiate(bullet, gunPosition.transform.position, transform.rotation);
         }
+    }
 
-        transform.position = transform.position + transform.up * Time.deltaTime * actualSpeed;
-        transform.Rotate(0, 0, rotateAmount);
+    private void HandleWrapping()
+    {
+        if (transform.position.y > verticalHalfSize)
+        {
+            transform.position = new Vector2(transform.position.x, -verticalHalfSize);
+        }
+        if (transform.position.y < -verticalHalfSize)
+        {
+            transform.position = new Vector2(transform.position.x, verticalHalfSize);
+        }
+        if (transform.position.x > horizontalHalfSize)
+        {
+            transform.position = new Vector2(-horizontalHalfSize, transform.position.y);
+        }
+        if (transform.position.x < -horizontalHalfSize)
+        {
+            transform.position = new Vector2(horizontalHalfSize, transform.position.y);
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
