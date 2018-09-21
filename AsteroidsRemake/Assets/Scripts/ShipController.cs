@@ -36,21 +36,21 @@ public class ShipController : MonoBehaviour
 
     private void GetInput()
     {
-        if (Input.GetKey(KeyCode.W))
+        if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
         {
             direction += (Vector2)(transform.up * acceleration);
         }
-        if (Input.GetKey(KeyCode.A))
+        if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
         {
             if (rotateAmount < maxLookSpeed)
                 rotateAmount += lookSpeed * Time.deltaTime;
         }
-        if (Input.GetKey(KeyCode.D))
+        if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
         {
             if (rotateAmount > -maxLookSpeed)
                 rotateAmount += -lookSpeed * Time.deltaTime;
         }
-        if (!Input.GetKey(KeyCode.A) && !Input.GetKey(KeyCode.D))
+        if (!Input.GetKey(KeyCode.A) && !Input.GetKey(KeyCode.D) && !Input.GetKey(KeyCode.RightArrow) && !Input.GetKey(KeyCode.LeftArrow))
         {
             rotateAmount = Mathf.Lerp(rotateAmount, 0, 0.2f);
         }
@@ -89,7 +89,7 @@ public class ShipController : MonoBehaviour
         if (collision.tag == "Asteroid")
         {
             Instantiate(explosion, transform.position, transform.rotation);
-            Destroy(gameObject);
+            SceneManager.instance.DestroyPlayer();
         }
     }
 }
