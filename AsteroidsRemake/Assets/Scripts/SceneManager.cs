@@ -1,16 +1,19 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.UI;
 
 public class SceneManager : MonoBehaviour
 {
-
     public GameObject asteroid;
     public GameObject ship;
     public Text scoreText;
     public Text livesText;
+    public Text startGameText;
     public float numberOfAsteroids;
 
     public static SceneManager instance;
+    public enum GameState { RUNNING, STOPPED }
+    public GameState gameState;
 
     private GameObject shipReference;
     private bool respawningCharacter;
@@ -22,14 +25,18 @@ public class SceneManager : MonoBehaviour
 
     void Start()
     {
+        gameState = GameState.STOPPED;
         instance = this;
         lives = 3;
-        Instantiate(asteroid, new Vector2(3, 3), transform.rotation);
-        shipReference = Instantiate(ship);
     }
 
     private void Update()
     {
+        if (Input.GetKey(KeyCode.Space) && gameState == GameState.STOPPED)
+        {
+            StartGame();
+        }
+
         scoreText.text = score.ToString();
         livesText.text = lives.ToString() + "x";
 
@@ -41,6 +48,27 @@ public class SceneManager : MonoBehaviour
                 respawningCharacter = false;
             }
         }
+    }
+
+    private void StartGame()
+    {
+        Asteroid[] asteroids = FindObjectsOfType<Asteroid>();
+        for (int i = 0; i < asteroids.Length; i++)
+        {
+            Destroy(asteroids[i].gameObject);
+        }
+        startGameText.enabled = false;
+
+        gameState = GameState.RUNNING;
+        lives = 3;
+        Instantiate(asteroid, new Vector2(3, 3), transform.rotation);
+        shipReference = Instantiate(ship);
+    }
+
+    private void EndGame()
+    {
+        gameState = GameState.STOPPED;
+        startGameText.enabled = true;
     }
 
     public void IncreaseScore(int amount)
@@ -56,6 +84,10 @@ public class SceneManager : MonoBehaviour
         if (lives > 0)
         {
             respawningCharacter = true;
+        }
+        else
+        {
+            EndGame();
         }
     }
 }
