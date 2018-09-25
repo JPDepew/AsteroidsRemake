@@ -16,6 +16,7 @@ public class ShipController : MonoBehaviour
     private AudioSource audioSource;
     private Vector2 direction;
     private float rotateAmount = 0;
+    private int lives;
 
     float verticalHalfSize;
     float horizontalHalfSize;
@@ -34,6 +35,11 @@ public class ShipController : MonoBehaviour
 
         transform.position = transform.position + (Vector3)direction * Time.deltaTime;
         transform.Rotate(0, 0, rotateAmount);
+    }
+
+    public int GetLives()
+    {
+        return lives;
     }
 
     private void GetInput()
@@ -92,7 +98,7 @@ public class ShipController : MonoBehaviour
         if (collision.tag == "Asteroid")
         {
             Instantiate(explosion, transform.position, transform.rotation);
-            SceneManager.instance.DestroyPlayer();
+            FindObjectOfType<SceneManager>().RespawnPlayer();
         }
     }
 }

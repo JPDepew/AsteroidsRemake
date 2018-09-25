@@ -12,10 +12,10 @@ public class SceneManager : MonoBehaviour
     public Text sfxCreditsText;
     public float numberOfAsteroids;
 
-    public static SceneManager instance;
     public enum GameState { RUNNING, STOPPED }
     public GameState gameState;
 
+    private ShipController shipController;
     private AudioSource audioSource;
     private GameObject shipReference;
     private bool respawningCharacter;
@@ -25,7 +25,6 @@ public class SceneManager : MonoBehaviour
     private int score;
     private int scoreTracker;
     private int asteroidCountTracker;
-    private int lives;
     private float verticalHalfSize = 0;
     private float horizontalHalfSize = 0;
 
@@ -33,8 +32,6 @@ public class SceneManager : MonoBehaviour
     {
         audioSource = GetComponent<AudioSource>();
         gameState = GameState.STOPPED;
-        instance = this;
-        lives = 3;
         verticalHalfSize = Camera.main.orthographicSize;
         horizontalHalfSize = verticalHalfSize * Screen.width / Screen.height;
         Asteroid.onSmallAsteroidDestroyed += OnSmallAsteroidDestroyed;
@@ -48,11 +45,14 @@ public class SceneManager : MonoBehaviour
         }
 
         scoreText.text = score.ToString();
-        livesText.text = lives.ToString() + "x";
-        if(scoreTracker > 10000)
+        if (shipController != null)
+        {
+            livesText.text = shipController.GetLives().ToString() + "x";
+        }
+        if (scoreTracker > 10000)
         {
             scoreTracker = 0;
-            lives++;
+            //lives++;
         }
 
         if (respawningCharacter)
@@ -60,6 +60,7 @@ public class SceneManager : MonoBehaviour
             if (Time.time > targetTime)
             {
                 shipReference = Instantiate(ship);
+                shipController = shipReference.GetComponent<ShipController>();
                 respawningCharacter = false;
             }
         }
@@ -70,9 +71,10 @@ public class SceneManager : MonoBehaviour
         gameState = GameState.RUNNING;
         startGameText.enabled = false;
         sfxCreditsText.enabled = false;
-        lives = 3;
         asteroidCountTracker = 0;
         shipReference = Instantiate(ship);
+        shipController = shipReference.GetComponent<ShipController>();
+
         Asteroid[] asteroids = FindObjectsOfType<Asteroid>();
         for (int i = 0; i < asteroids.Length; i++)
         {
@@ -106,8 +108,7 @@ public class SceneManager : MonoBehaviour
     private void OnSmallAsteroidDestroyed()
     {
         asteroidCountTracker++;
-        Debug.Log(asteroidCountTracker);
-        if(asteroidCountTracker >= numberOfAsteroids * 4)
+        if (asteroidCountTracker >= numberOfAsteroids * 4)
         {
             numberOfAsteroids++;
             asteroidCountTracker = 0;
@@ -124,23 +125,18 @@ public class SceneManager : MonoBehaviour
 
     public void IncreaseScore(int amount)
     {
-        audioSource.Play();
+        //audioSource.Play();
         score += amount;
         scoreTracker += amount;
     }
 
-    public void DestroyPlayer()
+    public void RespawnPlayer()
     {
-        lives--;
         Destroy(shipReference);
-        targetTime = Time.time + respawnCharacterDelay;
-        if (lives > 0)
+        if (shipController.GetLives() > 0)
         {
             respawningCharacter = true;
-        }
-        else
-        {
-            EndGame();
+            targetTime = Time.time + respawnCharacterDelay;
         }
     }
 }

@@ -10,10 +10,14 @@ public class Asteroid : MonoBehaviour
     public bool smallAsteroid;
     public int points = 25;
 
+    private AudioSource audioSource;
+    private SpriteRenderer spriteRenderer;
     private float verticalHalfSize;
     private float horizontalHalfSize;
     Vector2 direction;
     SceneManager sceneManager;
+    private bool shouldDestroyAsteroid = false;
+    private float targetTime = 0;
 
     public delegate void OnDestroyed();
     public static event OnDestroyed onSmallAsteroidDestroyed;
@@ -21,6 +25,8 @@ public class Asteroid : MonoBehaviour
     void Start()
     {
         sceneManager = FindObjectOfType<SceneManager>();
+        audioSource = GetComponent<AudioSource>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
         direction = Random.insideUnitCircle.normalized;
         verticalHalfSize = Camera.main.orthographicSize;
         horizontalHalfSize = verticalHalfSize * Screen.width / Screen.height;
@@ -28,6 +34,13 @@ public class Asteroid : MonoBehaviour
 
     void Update()
     {
+        if (shouldDestroyAsteroid)
+        {
+            if (Time.time > targetTime)
+            {
+                Destroy(gameObject);
+            }
+        }
         transform.position = (Vector2)transform.position + direction * speed * Time.deltaTime;
         HandleWrapping();
     }
@@ -65,14 +78,18 @@ public class Asteroid : MonoBehaviour
             }
             else
             {
-                if(onSmallAsteroidDestroyed != null)
+                if (onSmallAsteroidDestroyed != null)
                 {
                     onSmallAsteroidDestroyed();
                 }
             }
             Destroy(collision.gameObject);
             sceneManager.IncreaseScore(points);
-            Destroy(gameObject);
+            audioSource.Play();
+            spriteRenderer.color = new Color(0, 0, 0, 0);
+            GetComponent<Collider2D>().enabled = false;
+            shouldDestroyAsteroid = true;
+            targetTime = Time.time + 1f;
         }
     }
 }
