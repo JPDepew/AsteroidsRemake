@@ -21,13 +21,20 @@ public class SceneManager : MonoBehaviour
     private float targetTime;
 
     private int score;
+    private int scoreTracker;
+    private int asteroidCountTracker;
     private int lives;
+    private float verticalHalfSize = 0;
+    private float horizontalHalfSize = 0;
 
     void Start()
     {
         gameState = GameState.STOPPED;
         instance = this;
         lives = 3;
+        verticalHalfSize = Camera.main.orthographicSize;
+        horizontalHalfSize = verticalHalfSize * Screen.width / Screen.height;
+        Asteroid.onSmallAsteroidDestroyed += OnSmallAsteroidDestroyed;
     }
 
     private void Update()
@@ -39,6 +46,11 @@ public class SceneManager : MonoBehaviour
 
         scoreText.text = score.ToString();
         livesText.text = lives.ToString() + "x";
+        if(scoreTracker > 10000)
+        {
+            scoreTracker = 0;
+            lives++;
+        }
 
         if (respawningCharacter)
         {
@@ -52,17 +64,51 @@ public class SceneManager : MonoBehaviour
 
     private void StartGame()
     {
+        gameState = GameState.RUNNING;
+        startGameText.enabled = false;
+        lives = 3;
+        asteroidCountTracker = 0;
+        shipReference = Instantiate(ship);
         Asteroid[] asteroids = FindObjectsOfType<Asteroid>();
         for (int i = 0; i < asteroids.Length; i++)
         {
             Destroy(asteroids[i].gameObject);
         }
-        startGameText.enabled = false;
 
-        gameState = GameState.RUNNING;
-        lives = 3;
-        Instantiate(asteroid, new Vector2(3, 3), transform.rotation);
-        shipReference = Instantiate(ship);
+        InstantiateNewWave();
+    }
+
+    private void InstantiateNewWave()
+    {
+        for (int i = 0; i < numberOfAsteroids; i++)
+        {
+            int xRange = (int)Random.Range(-horizontalHalfSize, horizontalHalfSize);
+            int yRange = (int)Random.Range(-verticalHalfSize, verticalHalfSize);
+            if (xRange < 2 && xRange > -2)
+            {
+                xRange = 2;
+            }
+            if (yRange < 2 && yRange > -2)
+            {
+                yRange = 2;
+            }
+
+            Vector2 asteroidPositon = new Vector2(xRange, yRange);
+
+            Instantiate(asteroid, asteroidPositon, transform.rotation);
+        }
+    }
+
+    private void OnSmallAsteroidDestroyed()
+    {
+        asteroidCountTracker++;
+        Debug.Log(asteroidCountTracker);
+        if(asteroidCountTracker >= numberOfAsteroids * 4)
+        {
+            numberOfAsteroids++;
+            asteroidCountTracker = 0;
+            InstantiateNewWave();
+        }
     }
 
     private void EndGame()
@@ -74,6 +120,7 @@ public class SceneManager : MonoBehaviour
     public void IncreaseScore(int amount)
     {
         score += amount;
+        scoreTracker += amount;
     }
 
     public void DestroyPlayer()

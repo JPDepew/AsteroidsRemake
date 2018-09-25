@@ -102,7 +102,7 @@ MonoBehaviour:
   explosion: {fileID: 1321219835005542, guid: b31cd1f96329e354cb7b0c350f7f158c, type: 2}
   asteroid: {fileID: 0}
   speed: 2
-  lastAsteroid: 1
+  smallAsteroid: 1
   points: 100
 --- !u!212 &212875566696505200
 SpriteRenderer:

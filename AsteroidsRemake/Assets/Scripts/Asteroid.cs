@@ -7,13 +7,16 @@ public class Asteroid : MonoBehaviour
     public GameObject explosion;
     public GameObject asteroid;
     public float speed = 2f;
-    public bool lastAsteroid;
+    public bool smallAsteroid;
     public int points = 25;
 
     private float verticalHalfSize;
     private float horizontalHalfSize;
     Vector2 direction;
     SceneManager sceneManager;
+
+    public delegate void OnDestroyed();
+    public static event OnDestroyed onSmallAsteroidDestroyed;
 
     void Start()
     {
@@ -53,11 +56,19 @@ public class Asteroid : MonoBehaviour
     {
         if (collision.tag == "Bullet")
         {
-            Instantiate(explosion, transform.position, transform.rotation);
-            if (!lastAsteroid)
+            GameObject effect = Instantiate(explosion, transform.position, transform.rotation);
+            effect.transform.localScale = transform.localScale * 5;
+            if (!smallAsteroid)
             {
                 Instantiate(asteroid, transform.position, transform.rotation);
                 Instantiate(asteroid, transform.position, transform.rotation);
+            }
+            else
+            {
+                if(onSmallAsteroidDestroyed != null)
+                {
+                    onSmallAsteroidDestroyed();
+                }
             }
             Destroy(collision.gameObject);
             sceneManager.IncreaseScore(points);
