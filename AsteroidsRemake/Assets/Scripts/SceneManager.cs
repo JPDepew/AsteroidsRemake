@@ -9,12 +9,14 @@ public class SceneManager : MonoBehaviour
     public Text scoreText;
     public Text livesText;
     public Text startGameText;
+    public Text sfxCreditsText;
     public float numberOfAsteroids;
 
     public static SceneManager instance;
     public enum GameState { RUNNING, STOPPED }
     public GameState gameState;
 
+    private AudioSource audioSource;
     private GameObject shipReference;
     private bool respawningCharacter;
     private float respawnCharacterDelay = 1f;
@@ -29,6 +31,7 @@ public class SceneManager : MonoBehaviour
 
     void Start()
     {
+        audioSource = GetComponent<AudioSource>();
         gameState = GameState.STOPPED;
         instance = this;
         lives = 3;
@@ -66,6 +69,7 @@ public class SceneManager : MonoBehaviour
     {
         gameState = GameState.RUNNING;
         startGameText.enabled = false;
+        sfxCreditsText.enabled = false;
         lives = 3;
         asteroidCountTracker = 0;
         shipReference = Instantiate(ship);
@@ -115,10 +119,12 @@ public class SceneManager : MonoBehaviour
     {
         gameState = GameState.STOPPED;
         startGameText.enabled = true;
+        sfxCreditsText.enabled = true;
     }
 
     public void IncreaseScore(int amount)
     {
+        audioSource.Play();
         score += amount;
         scoreTracker += amount;
     }

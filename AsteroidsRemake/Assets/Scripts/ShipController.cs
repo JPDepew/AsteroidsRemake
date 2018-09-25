@@ -13,6 +13,7 @@ public class ShipController : MonoBehaviour
     public float lookSpeed = 1;
     public float maxLookSpeed = 5;
 
+    private AudioSource audioSource;
     private Vector2 direction;
     private float rotateAmount = 0;
 
@@ -21,6 +22,7 @@ public class ShipController : MonoBehaviour
 
     private void Start()
     {
+        audioSource = GetComponent<AudioSource>();
         verticalHalfSize = Camera.main.orthographicSize;
         horizontalHalfSize = verticalHalfSize * Screen.width / Screen.height;
     }
@@ -57,6 +59,7 @@ public class ShipController : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
+            audioSource.Play();
             Instantiate(bullet, gunPosition.transform.position, transform.rotation);
         }
     }
