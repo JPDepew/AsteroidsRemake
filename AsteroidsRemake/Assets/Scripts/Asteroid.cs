@@ -34,6 +34,13 @@ public class Asteroid : MonoBehaviour
 
     void Update()
     {
+        HandleDestroyingAsteroid();
+        transform.position = (Vector2)transform.position + direction * speed * Time.deltaTime;
+        HandleWrapping();
+    }
+
+    private void HandleDestroyingAsteroid()
+    {
         if (shouldDestroyAsteroid)
         {
             if (Time.time > targetTime)
@@ -41,8 +48,6 @@ public class Asteroid : MonoBehaviour
                 Destroy(gameObject);
             }
         }
-        transform.position = (Vector2)transform.position + direction * speed * Time.deltaTime;
-        HandleWrapping();
     }
 
     private void HandleWrapping()

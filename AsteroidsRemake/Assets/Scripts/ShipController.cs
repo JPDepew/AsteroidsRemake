@@ -13,17 +13,20 @@ public class ShipController : MonoBehaviour
     public float lookSpeed = 1;
     public float maxLookSpeed = 5;
 
-    private AudioSource audioSource;
+    private AudioSource[] audioSources;
     private Vector2 direction;
+    private PlayerStats playerStats;
     private float rotateAmount = 0;
-    private int lives;
+    private bool shouldDestroyShip;
+    private float targetTime;
 
     float verticalHalfSize;
     float horizontalHalfSize;
 
     private void Start()
     {
-        audioSource = GetComponent<AudioSource>();
+        playerStats = PlayerStats.instance;
+        audioSources = GetComponents<AudioSource>();
         verticalHalfSize = Camera.main.orthographicSize;
         horizontalHalfSize = verticalHalfSize * Screen.width / Screen.height;
     }
@@ -32,14 +35,9 @@ public class ShipController : MonoBehaviour
     {
         GetInput();
         HandleWrapping();
-
+        HandleDestroyingShip();
         transform.position = transform.position + (Vector3)direction * Time.deltaTime;
         transform.Rotate(0, 0, rotateAmount);
-    }
-
-    public int GetLives()
-    {
-        return lives;
     }
 
     private void GetInput()
@@ -63,10 +61,21 @@ public class ShipController : MonoBehaviour
             rotateAmount = Mathf.Lerp(rotateAmount, 0, 0.2f);
         }
 
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space) && !shouldDestroyShip)
         {
-            audioSource.Play();
+            audioSources[0].Play();
             Instantiate(bullet, gunPosition.transform.position, transform.rotation);
+        }
+    }
+
+    private void HandleDestroyingShip()
+    {
+        if (shouldDestroyShip)
+        {
+            if (Time.time > targetTime)
+            {
+                Destroy(gameObject);
+            }
         }
     }
 
@@ -97,6 +106,13 @@ public class ShipController : MonoBehaviour
     {
         if (collision.tag == "Asteroid")
         {
+            shouldDestroyShip = true;
+            targetTime = Time.time + 1f;
+            audioSources[1].Play();
+            GetComponent<SpriteRenderer>().color = new Color(0, 0, 0, 0);
+            GetComponent<Collider2D>().enabled = false;
+            playerStats.DecrementLives();
+
             Instantiate(explosion, transform.position, transform.rotation);
             FindObjectOfType<SceneManager>().RespawnPlayer();
         }

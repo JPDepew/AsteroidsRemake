@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 public class SceneManager : MonoBehaviour
@@ -10,11 +9,13 @@ public class SceneManager : MonoBehaviour
     public Text livesText;
     public Text startGameText;
     public Text sfxCreditsText;
+    public Text gameOverText;
     public float numberOfAsteroids;
 
     public enum GameState { RUNNING, STOPPED }
     public GameState gameState;
 
+    private PlayerStats playerStats;
     private ShipController shipController;
     private AudioSource audioSource;
     private GameObject shipReference;
@@ -32,6 +33,7 @@ public class SceneManager : MonoBehaviour
     {
         audioSource = GetComponent<AudioSource>();
         gameState = GameState.STOPPED;
+        playerStats = PlayerStats.instance;
         verticalHalfSize = Camera.main.orthographicSize;
         horizontalHalfSize = verticalHalfSize * Screen.width / Screen.height;
         Asteroid.onSmallAsteroidDestroyed += OnSmallAsteroidDestroyed;
@@ -47,12 +49,12 @@ public class SceneManager : MonoBehaviour
         scoreText.text = score.ToString();
         if (shipController != null)
         {
-            livesText.text = shipController.GetLives().ToString() + "x";
+            livesText.text = playerStats.GetLives().ToString() + "x";
         }
         if (scoreTracker > 10000)
         {
             scoreTracker = 0;
-            //lives++;
+            playerStats.IncrementLives();
         }
 
         if (respawningCharacter)
@@ -132,11 +134,14 @@ public class SceneManager : MonoBehaviour
 
     public void RespawnPlayer()
     {
-        Destroy(shipReference);
-        if (shipController.GetLives() > 0)
+        if (playerStats.GetLives() > 0)
         {
             respawningCharacter = true;
             targetTime = Time.time + respawnCharacterDelay;
+        }
+        else
+        {
+            gameOverText.gameObject.SetActive(true);
         }
     }
 }
