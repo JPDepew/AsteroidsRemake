@@ -11,6 +11,8 @@ public class SceneManager : MonoBehaviour
     public Text sfxCreditsText;
     public Text gameOverText;
     public float numberOfAsteroids;
+    public float playerRespawnDelay = 1f;
+    public float instantiateNewWaveDelay = 2f;
 
     public enum GameState { RUNNING, STOPPED }
     public GameState gameState;
@@ -20,8 +22,9 @@ public class SceneManager : MonoBehaviour
     private AudioSource audioSource;
     private GameObject shipReference;
     private bool respawningCharacter;
-    private float respawnCharacterDelay = 1f;
-    private float targetTime;
+    private bool instantiatingNewWave;
+    private float playerRespawnTimer = 1f;
+    private float instantiateNewWaveTimer = 2f;
 
     private int score;
     private int scoreTracker;
@@ -46,26 +49,15 @@ public class SceneManager : MonoBehaviour
             StartGame();
         }
 
-        scoreText.text = score.ToString();
-        if (shipController != null)
-        {
-            livesText.text = playerStats.GetLives().ToString() + "x";
-        }
         if (scoreTracker > 10000)
         {
             scoreTracker = 0;
             playerStats.IncrementLives();
         }
 
-        if (respawningCharacter)
-        {
-            if (Time.time > targetTime)
-            {
-                shipReference = Instantiate(ship);
-                shipController = shipReference.GetComponent<ShipController>();
-                respawningCharacter = false;
-            }
-        }
+        HandleUI();
+        HandleRespawnTimer();
+        HandleWaveTimer();
     }
 
     private void StartGame()
@@ -84,6 +76,37 @@ public class SceneManager : MonoBehaviour
         }
 
         InstantiateNewWave();
+    }
+
+    private void HandleUI()
+    {
+        scoreText.text = score.ToString();
+        livesText.text = playerStats.GetLives().ToString() + "x";
+    }
+
+    private void HandleRespawnTimer()
+    {
+        if (respawningCharacter)
+        {
+            if (Time.time > playerRespawnTimer)
+            {
+                shipReference = Instantiate(ship);
+                shipController = shipReference.GetComponent<ShipController>();
+                respawningCharacter = false;
+            }
+        }
+    }
+
+    private void HandleWaveTimer()
+    {
+        if (instantiatingNewWave)
+        {
+            if (Time.time > instantiateNewWaveTimer)
+            {
+                InstantiateNewWave();
+                instantiatingNewWave = false;
+            }
+        }
     }
 
     private void InstantiateNewWave()
@@ -114,7 +137,8 @@ public class SceneManager : MonoBehaviour
         {
             numberOfAsteroids++;
             asteroidCountTracker = 0;
-            InstantiateNewWave();
+            instantiateNewWaveTimer = Time.time + instantiateNewWaveDelay;
+            instantiatingNewWave = true;
         }
     }
 
@@ -127,7 +151,6 @@ public class SceneManager : MonoBehaviour
 
     public void IncreaseScore(int amount)
     {
-        //audioSource.Play();
         score += amount;
         scoreTracker += amount;
     }
@@ -137,7 +160,7 @@ public class SceneManager : MonoBehaviour
         if (playerStats.GetLives() > 0)
         {
             respawningCharacter = true;
-            targetTime = Time.time + respawnCharacterDelay;
+            playerRespawnTimer = Time.time + playerRespawnDelay;
         }
         else
         {

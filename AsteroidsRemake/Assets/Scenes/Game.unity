@@ -594,6 +594,8 @@ MonoBehaviour:
   sfxCreditsText: {fileID: 1798995594}
   gameOverText: {fileID: 75160465}
   numberOfAsteroids: 4
+  playerRespawnDelay: 1
+  instantiateNewWaveDelay: 2
   gameState: 1
 --- !u!4 &630415668
 Transform:
