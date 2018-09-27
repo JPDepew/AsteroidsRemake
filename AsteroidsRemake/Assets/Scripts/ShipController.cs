@@ -84,6 +84,8 @@ public class ShipController : MonoBehaviour
     /// </summary>
     private void HandleWrapping()
     {
+        verticalHalfSize = Camera.main.orthographicSize;
+        horizontalHalfSize = verticalHalfSize * Screen.width / Screen.height;
         if (transform.position.y > verticalHalfSize)
         {
             transform.position = new Vector2(transform.position.x, -verticalHalfSize);
