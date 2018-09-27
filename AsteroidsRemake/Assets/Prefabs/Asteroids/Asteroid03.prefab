@@ -21,9 +21,9 @@ GameObject:
   - component: {fileID: 4596501768448634}
   - component: {fileID: 212875566696505200}
   - component: {fileID: 114762203526917548}
-  - component: {fileID: 61312937634603118}
   - component: {fileID: 50640757533876242}
   - component: {fileID: 82780594144952244}
+  - component: {fileID: 58796180423655424}
   m_Layer: 0
   m_Name: Asteroid03
   m_TagString: Asteroid
@@ -64,8 +64,8 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!61 &61312937634603118
-BoxCollider2D:
+--- !u!58 &58796180423655424
+CircleCollider2D:
   m_ObjectHideFlags: 1
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
@@ -76,19 +76,9 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.06317592, y: -0.037166595}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 6, y: 6}
-    newSize: {x: 0.16, y: 0.16}
-    adaptiveTilingThreshold: 0.5
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
+  m_Offset: {x: 0.15, y: -0.1}
   serializedVersion: 2
-  m_Size: {x: 4.1937547, y: 3.6957474}
-  m_EdgeRadius: 0
+  m_Radius: 2.52
 --- !u!82 &82780594144952244
 AudioSource:
   m_ObjectHideFlags: 1

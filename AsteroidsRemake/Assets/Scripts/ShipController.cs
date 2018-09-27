@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class ShipController : MonoBehaviour
 {
@@ -8,7 +6,6 @@ public class ShipController : MonoBehaviour
     public GameObject bullet;
     public GameObject explosion;
 
-    public float maxSpeed = 2;
     public float acceleration = 0.1f;
     public float lookSpeed = 1;
     public float maxLookSpeed = 5;
@@ -44,17 +41,19 @@ public class ShipController : MonoBehaviour
     {
         if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
         {
-            direction += (Vector2)(transform.up * acceleration);
+            direction = Vector2.Lerp(direction, direction + (Vector2)transform.up * acceleration, 0.9f);
         }
         if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
         {
             if (rotateAmount < maxLookSpeed)
-                rotateAmount += lookSpeed * Time.deltaTime;
+                rotateAmount = Mathf.Lerp(rotateAmount, rotateAmount + lookSpeed * Time.deltaTime, 0.9f);
+                //rotateAmount += lookSpeed * Time.deltaTime;
         }
         if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
         {
             if (rotateAmount > -maxLookSpeed)
-                rotateAmount += -lookSpeed * Time.deltaTime;
+                rotateAmount = Mathf.Lerp(rotateAmount, rotateAmount - lookSpeed * Time.deltaTime, 0.9f);
+                //rotateAmount -= lookSpeed * Time.deltaTime;
         }
         if (!Input.GetKey(KeyCode.A) && !Input.GetKey(KeyCode.D) && !Input.GetKey(KeyCode.RightArrow) && !Input.GetKey(KeyCode.LeftArrow))
         {

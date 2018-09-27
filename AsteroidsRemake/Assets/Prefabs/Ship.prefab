@@ -379,9 +379,8 @@ MonoBehaviour:
   gunPosition: {fileID: 1066254635760868}
   bullet: {fileID: 1701187051125838, guid: 2608c77311a8f484aaeb9a2a711fd9fa, type: 2}
   explosion: {fileID: 1153526145521404, guid: 91d5cec2f1757104b84a0bdf7a676330, type: 2}
-  maxSpeed: 2
-  acceleration: 0.15
-  lookSpeed: 20
+  acceleration: 0.13
+  lookSpeed: 30
   maxLookSpeed: 10
 --- !u!212 &212246921402755508
 SpriteRenderer:
