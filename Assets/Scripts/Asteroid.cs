@@ -74,27 +74,36 @@ public class Asteroid : MonoBehaviour
     {
         if (collision.tag == "Bullet")
         {
-            GameObject effect = Instantiate(explosion, transform.position, transform.rotation);
-            effect.transform.localScale = transform.localScale * 5;
-            if (!smallAsteroid)
-            {
-                Instantiate(asteroid, transform.position, transform.rotation);
-                Instantiate(asteroid, transform.position, transform.rotation);
-            }
-            else
-            {
-                if (onSmallAsteroidDestroyed != null)
-                {
-                    onSmallAsteroidDestroyed();
-                }
-            }
             Destroy(collision.gameObject);
+
             sceneManager.IncreaseScore(points);
-            audioSource.Play();
-            spriteRenderer.color = new Color(0, 0, 0, 0);
-            GetComponent<Collider2D>().enabled = false;
-            shouldDestroyAsteroid = true;
-            targetTime = Time.time + 1f;
+            DestroyAsteroid();
         }
+    }
+
+    public void DestroyAsteroid()
+    {
+        GameObject effect = Instantiate(explosion, transform.position, transform.rotation);
+        effect.transform.localScale = transform.localScale * 5;
+        if (!smallAsteroid)
+        {
+            GameObject tempAsteroid1 = Instantiate(asteroid, transform.position, transform.rotation);
+            GameObject tempAsteroid2 = Instantiate(asteroid, transform.position, transform.rotation);
+            tempAsteroid1.GetComponent<Asteroid>().speed = Random.Range(2, 4);
+            tempAsteroid2.GetComponent<Asteroid>().speed = Random.Range(2, 4);
+        }
+        else
+        {
+            if (onSmallAsteroidDestroyed != null)
+            {
+                onSmallAsteroidDestroyed();
+            }
+        }
+
+        audioSource.Play();
+        spriteRenderer.color = new Color(0, 0, 0, 0);
+        GetComponent<Collider2D>().enabled = false;
+        shouldDestroyAsteroid = true;
+        targetTime = Time.time + 1f;
     }
 }

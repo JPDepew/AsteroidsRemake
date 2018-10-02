@@ -29,6 +29,7 @@ public class SceneManager : MonoBehaviour
     private int score;
     private int scoreTracker;
     private int asteroidCountTracker;
+    private int dstAsteroidsSpawnFromSides = 1;
     private float verticalHalfSize = 0;
     private float horizontalHalfSize = 0;
 
@@ -115,18 +116,16 @@ public class SceneManager : MonoBehaviour
         {
             int xRange = (int)Random.Range(-horizontalHalfSize, horizontalHalfSize);
             int yRange = (int)Random.Range(-verticalHalfSize, verticalHalfSize);
-            if (xRange < 2 && xRange > -2)
-            {
-                xRange = 2;
-            }
-            if (yRange < 2 && yRange > -2)
-            {
-                yRange = 2;
-            }
 
             Vector2 asteroidPositon = new Vector2(xRange, yRange);
-
-            Instantiate(asteroid, asteroidPositon, transform.rotation);
+            if ((asteroidPositon - (Vector2)shipReference.transform.position).magnitude < 3)
+            {
+                i--; // This is probably really sketchy, I know... But it works really well...
+            }
+            else
+            {
+                Instantiate(asteroid, asteroidPositon, transform.rotation);
+            }
         }
     }
 
