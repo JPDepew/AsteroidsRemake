@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 using UnityEngine.UI;
 
 public class SceneManager : MonoBehaviour
@@ -29,7 +30,7 @@ public class SceneManager : MonoBehaviour
     private int score;
     private int scoreTracker;
     private int asteroidCountTracker;
-    private int dstAsteroidsSpawnFromSides = 1;
+    private int dstAsteroidsCanSpawnFromPlayer = 3;
     private float verticalHalfSize = 0;
     private float horizontalHalfSize = 0;
 
@@ -118,7 +119,7 @@ public class SceneManager : MonoBehaviour
             int yRange = (int)Random.Range(-verticalHalfSize, verticalHalfSize);
 
             Vector2 asteroidPositon = new Vector2(xRange, yRange);
-            if ((asteroidPositon - (Vector2)shipReference.transform.position).magnitude < 3)
+            if ((asteroidPositon - (Vector2)shipReference.transform.position).magnitude < dstAsteroidsCanSpawnFromPlayer)
             {
                 i--; // This is probably really sketchy, I know... But it works really well...
             }
@@ -164,6 +165,17 @@ public class SceneManager : MonoBehaviour
         else
         {
             gameOverText.gameObject.SetActive(true);
+            StartCoroutine(RestartSceneTimer());
         }
+    }
+
+    IEnumerator RestartSceneTimer()
+    {
+        float targetTime = Time.time + 3f;
+        while (Time.time < targetTime)
+        {
+            yield return null;
+        }
+        UnityEngine.SceneManagement.SceneManager.LoadScene(0);
     }
 }
