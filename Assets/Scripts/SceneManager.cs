@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -16,6 +17,7 @@ public class SceneManager : MonoBehaviour
     public float instantiateNewWaveDelay = 2f;
 
     public enum GameState { RUNNING, STOPPED }
+    [NonSerialized]
     public GameState gameState;
 
     private PlayerStats playerStats;
@@ -30,7 +32,7 @@ public class SceneManager : MonoBehaviour
     private int score;
     private int scoreTracker;
     private int asteroidCountTracker;
-    private int dstAsteroidsCanSpawnFromPlayer = 3;
+    private int dstAsteroidsSpawnFromSides = 1;
     private float verticalHalfSize = 0;
     private float horizontalHalfSize = 0;
 
@@ -58,7 +60,6 @@ public class SceneManager : MonoBehaviour
         }
 
         HandleUI();
-        HandleRespawnTimer();
         HandleWaveTimer();
     }
 
@@ -86,40 +87,29 @@ public class SceneManager : MonoBehaviour
         livesText.text = playerStats.GetLives().ToString() + "x";
     }
 
-    private void HandleRespawnTimer()
+    IEnumerator WaitForRespawn()
     {
-        if (respawningCharacter)
-        {
-            if (Time.time > playerRespawnTimer)
-            {
-                shipReference = Instantiate(ship);
-                shipController = shipReference.GetComponent<ShipController>();
-                respawningCharacter = false;
-            }
-        }
+        yield return new WaitForSeconds(playerRespawnDelay);
+        shipReference = Instantiate(ship);
+        shipController = shipReference.GetComponent<ShipController>();
     }
 
-    private void HandleWaveTimer()
+    IEnumerator HandleWaveTimer()
     {
-        if (instantiatingNewWave)
-        {
-            if (Time.time > instantiateNewWaveTimer)
-            {
-                InstantiateNewWave();
-                instantiatingNewWave = false;
-            }
-        }
+        yield return new WaitForSeconds(instantiateNewWaveTimer);
+        InstantiateNewWave();
     }
 
     private void InstantiateNewWave()
     {
         for (int i = 0; i < numberOfAsteroids; i++)
         {
-            int xRange = (int)Random.Range(-horizontalHalfSize, horizontalHalfSize);
-            int yRange = (int)Random.Range(-verticalHalfSize, verticalHalfSize);
+            int xRange = (int)UnityEngine.Random.Range(-horizontalHalfSize, horizontalHalfSize);
+            int yRange = (int)UnityEngine.Random.Range(-verticalHalfSize, verticalHalfSize);
 
             Vector2 asteroidPositon = new Vector2(xRange, yRange);
             if ((asteroidPositon - (Vector2)shipReference.transform.position).magnitude < dstAsteroidsCanSpawnFromPlayer)
+            if ((asteroidPositon - (Vector2)shipReference.transform.position).magnitude < 3)
             {
                 i--; // This is probably really sketchy, I know... But it works really well...
             }
@@ -137,8 +127,7 @@ public class SceneManager : MonoBehaviour
         {
             numberOfAsteroids++;
             asteroidCountTracker = 0;
-            instantiateNewWaveTimer = Time.time + instantiateNewWaveDelay;
-            instantiatingNewWave = true;
+            StartCoroutine(HandleWaveTimer());
         }
     }
 
@@ -159,23 +148,11 @@ public class SceneManager : MonoBehaviour
     {
         if (playerStats.GetLives() > 0)
         {
-            respawningCharacter = true;
-            playerRespawnTimer = Time.time + playerRespawnDelay;
+            StartCoroutine(WaitForRespawn());
         }
         else
         {
             gameOverText.gameObject.SetActive(true);
-            StartCoroutine(RestartSceneTimer());
         }
-    }
-
-    IEnumerator RestartSceneTimer()
-    {
-        float targetTime = Time.time + 3f;
-        while (Time.time < targetTime)
-        {
-            yield return null;
-        }
-        UnityEngine.SceneManagement.SceneManager.LoadScene(0);
     }
 }

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 
 public class ShipController : MonoBehaviour
 {
@@ -16,8 +17,7 @@ public class ShipController : MonoBehaviour
     private SpriteRenderer spriteRenderer;
     private PlayerStats playerStats;
     private float rotateAmount = 0;
-    private bool shouldDestroyShip;
-    private float targetTime;
+    private bool isDestroyingShip = false;
 
     private float invulnerabilityTime = 2f;
     private float invulnerabilityTargetTime;
@@ -46,7 +46,6 @@ public class ShipController : MonoBehaviour
     {
         GetInput();
         HandleWrapping();
-        HandleDestroyingShip();
         HandleInvulnerability();
         transform.position = transform.position + (Vector3)direction * Time.deltaTime;
         transform.Rotate(0, 0, rotateAmount);
@@ -99,22 +98,18 @@ public class ShipController : MonoBehaviour
             }
         }
 
-        if (Input.GetKeyDown(KeyCode.Space) && !shouldDestroyShip)
+        if (Input.GetKeyDown(KeyCode.Space) && !isDestroyingShip)
         {
             audioSources[0].Play();
             Instantiate(bullet, gunPosition.transform.position, transform.rotation);
         }
     }
 
-    private void HandleDestroyingShip()
+    IEnumerator HandleDestroyingShip()
     {
-        if (shouldDestroyShip)
-        {
-            if (Time.time > targetTime)
-            {
-                Destroy(gameObject);
-            }
-        }
+        isDestroyingShip = true;
+        yield return new WaitForSeconds(1);
+        Destroy(gameObject);
     }
 
     /// <summary>
@@ -159,8 +154,7 @@ public class ShipController : MonoBehaviour
     {
         if (collision.tag == "Asteroid")
         {
-            shouldDestroyShip = true;
-            targetTime = Time.time + 1f;
+            StartCoroutine(HandleDestroyingShip());
             audioSources[1].Play();
             GetComponent<SpriteRenderer>().color = new Color(0, 0, 0, 0);
             GetComponent<Collider2D>().enabled = false;
